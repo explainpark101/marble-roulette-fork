@@ -20,7 +20,7 @@ jobs:
 
     # Permissions for GitHub Pages deployment
     permissions:
-      contents: read
+      contents: write
       pages: write
       id-token: write
 
@@ -43,7 +43,16 @@ jobs:
 
       - name: Build
         run: bun run build
-      - name: deploy
+
+      - name: Check dist directory
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "Error: dist directory not found"
+            exit 1
+          fi
+          ls -la dist
+
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
