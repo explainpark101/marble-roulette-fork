@@ -18,17 +18,32 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    # Permissions for GitHub Pages deployment
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
       # Runs a single command using the runners shell
-      - name: build
+      - name: Install dependencies
         run: |
-          yarn
+          yarn install --frozen-lockfile
           npx update-browserslist-db@latest
-          yarn build
+
+      - name: Build
+        run: yarn build
       - name: deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
